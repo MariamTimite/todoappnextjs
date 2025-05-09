@@ -1,26 +1,44 @@
 
+// src/components/todoItem.tsx
 "use client";
 
+import Link from "next/link";
 import { ITodoItemProps } from "@/interfaces/todo";
 
 export default function TodoItem({ todo, onToggle, onDelete }: ITodoItemProps) {
   return (
-    <div className="flex items-center justify-between p-2 border-b">
-      <span
-        onClick={() => onToggle(todo.id)}
-        className={`cursor-pointer ${
-          todo.completed ? "line-through text-gray-500" : ""
-        }`}
-      >
-        {todo.title}
-      </span>
-      <button
-        onClick={() => onDelete(todo.id)}
-        className="text-red-500 hover:text-red-700"
-      >
-        Supprimer
-      </button>
-    </div>
+    <section className="bg-green-50">
+    <tr className="border-b text-sm">
+      <td className="px-4 py-2">{todo.title}</td>
+      <td className="px-4 py-2">
+        <button
+          onClick={() => onToggle(todo.id)}
+          className={`px-3 py-1 rounded ${
+            todo.completed ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+          }`}
+        >
+          {todo.completed ? "Terminée" : "En cours"}
+        </button>
+      </td>
+      <td className="px-4 py-2 flex gap-2">
+      <Link
+  href={`/update-task/${todo.id}`}
+  className="text-blue-500 hover:underline"
+>
+  Modifier
+</Link>
+        <button
+  onClick={() => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")) {
+      onDelete(todo.id);
+    }
+  }}
+  className="text-red-500 hover:underline"
+>
+  Supprimer
+</button>
+      </td>
+    </tr>
+    </section>
   );
 }
-
