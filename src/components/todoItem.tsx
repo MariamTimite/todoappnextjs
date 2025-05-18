@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ITodo } from "@/interfaces/todo";
-import { addTodo, deleteTodo, getTodos, toggleTodo } from "@/geteways/todo";
+import {deleteTodo, getTodos, toggleTodo } from "@/geteways/todo";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import { Pencil, Trash2 } from "lucide-react";
 
