@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <nav className="bg-gradient-to-r from-blue-400 to-green-500 p-4 text-white flex justify-between items-center shadow-md">
+    <nav className="bg-gradient-to-r from-blue-600 to-green-600 p-4 text-white flex justify-between items-center shadow-md">
       <Link href="/" className="text-xl font-bold">
         Ma Todo App
       </Link>

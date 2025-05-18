@@ -1,30 +1,27 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
-
+import Link from "next/link";
 import { ITodo } from "@/interfaces/todo";
-import { addTodo, deleteTodo, getTodos, toggleTodo } from "@/geteways/todo";
-import TodoItem from "@/components/todoItem";
-import TodoForm from "@/components/todoForm";
+import { deleteTodo, getTodos, toggleTodo } from "@/geteways/todo";
+import { Trash2, Pencil } from "lucide-react";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 
 export default function TodoList() {
   const [todos, setTodos] = useState<ITodo[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
+  const [selectedTodoTitle, setSelectedTodoTitle] = useState("");
 
   useEffect(() => {
     setTodos(getTodos());
   }, []);
 
-  const handleAddTodo = (title: string) => {
-    const newTodo = addTodo(title);
-    setTodos((prevTodos) => [...prevTodos, newTodo]);
-  };
-
   const handleToggleTodo = (id: number) => {
     toggleTodo(id);
     setTodos((prevTodos) =>
       prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.id === id ? { ...todo, status: todo.status === "Terminée" ? "En cours" : "Terminée" } : todo
       )
     );
   };
@@ -35,20 +32,69 @@ export default function TodoList() {
   };
 
   return (
-    <main className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-4 text-center">Ma Todo List</h1>
-      {/* <TodoForm onAdd={handleAddTodo} /> */}
-      <div>
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onToggle={handleToggleTodo}
-            onDelete={handleDeleteTodo}
-          />
-        ))}
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-green-600 p-6">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl p-6">
+        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Ma Todo List</h1>
+
+        {todos.length === 0 ? (
+          <p className="text-center text-gray-500">Aucune tâche à faire</p>
+        ) : (
+          <table className="w-full table-auto text-sm">
+            <thead>
+              <tr className="bg-gray-100 text-gray-700 uppercase text-xs">
+                <th className="px-4 py-2 w-1/2">Tâche</th>
+                <th className="px-4 py-2 w-1/4">Statut</th>
+                <th className="px-4 py-2 w-1/4 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {todos.map((todo) => (
+                <tr key={todo.id} className="border-b text-gray-800 hover:bg-gray-50">
+                  <td className="px-4 py-2">{todo.title}</td>
+                  <td className="px-4 py-2">
+                    <button
+                      onClick={() => handleToggleTodo(todo.id)}
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        todo.status === "Terminée"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {todo.status}
+                    </button>
+                  </td>
+                  <td className="px-4 py-2 flex justify-center gap-4">
+                    <Link href={`/update-task/${todo.id}`}>
+                      <Pencil size={18} className="text-blue-600 hover:text-blue-800 cursor-pointer" />
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setModalOpen(true);
+                        setSelectedTodoId(todo.id);
+                        setSelectedTodoTitle(todo.title);
+                      }}
+                    >
+                      <Trash2 size={18} className="text-red-600 hover:text-red-800 cursor-pointer" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        <ConfirmDeleteModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={() => {
+            if (selectedTodoId !== null) {
+              handleDeleteTodo(selectedTodoId);
+              setModalOpen(false);
+            }
+          }}
+          taskTitle={selectedTodoTitle}
+        />
       </div>
     </main>
   );
 }
-

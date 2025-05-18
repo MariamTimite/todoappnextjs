@@ -18,22 +18,21 @@ export function getTodos(): ITodo[] {
   return getStoredTodos();
 }
 
-export function addTodo(title: string): ITodo {
-  const todos = getStoredTodos();
-  const newTodo: ITodo = {
+export function addTodo(title: string, status: "En cours" | "Terminée") {
+  const todos = getTodos();
+  const newTodo = {
     id: Date.now(),
     title,
-    completed: false,
+    status
   };
   todos.push(newTodo);
-  saveTodos(todos);
-  return newTodo;
+  localStorage.setItem("todos", JSON.stringify(todos));
 }
 
 export function toggleTodo(id: number): void {
   const todos = getStoredTodos();
   const updatedTodos = todos.map((todo) =>
-    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    todo.id === id ? { ...todo, completed: !todo.status } : todo
   );
   saveTodos(updatedTodos);
 }

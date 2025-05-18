@@ -2,7 +2,7 @@
 export interface ITodo {
     id: number;
     title: string;
-    completed: boolean;
+    status: "En cours" | "Terminée";
   }
   
   export interface ITodoItemProps {
